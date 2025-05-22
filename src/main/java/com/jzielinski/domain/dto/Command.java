@@ -1,6 +1,7 @@
 package com.jzielinski.domain.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.jzielinski.enums.CommandType;
 import com.jzielinski.enums.Direction;
