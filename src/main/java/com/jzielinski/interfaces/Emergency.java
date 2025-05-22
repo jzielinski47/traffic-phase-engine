@@ -1,4 +1,4 @@
 package com.jzielinski.interfaces;
 
-public interface Emergency extends Vehicle {
+public interface Emergency extends IVehicle {
 }
