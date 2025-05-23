@@ -1,61 +1,46 @@
 package com.jzielinski.controller;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jzielinski.domain.dto.Command;
-import com.jzielinski.domain.model.Road;
-import com.jzielinski.domain.model.Vehicle;
-import com.jzielinski.enums.Direction;
+import com.jzielinski.domain.model.SimulationContext;
+import com.jzielinski.enums.CommandType;
+import com.jzielinski.service.AddVehicleService;
+import com.jzielinski.service.CommandService;
+import com.jzielinski.service.StepService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class SimulationController {
 
-
-    Map<Direction, Road> roads = new HashMap<>();
-    ArrayList<Command> commands;
+    private final Map<CommandType, CommandService> commandServices = new HashMap<>();
+    private final SimulationContext context;
+    private final ArrayList<Command> commands;
 
     ObjectMapper om = new ObjectMapper();
 
-
     public SimulationController(ArrayList<Command> commands) {
         this.commands = commands;
-        roads.put(Direction.north, new Road(Direction.north));
-        roads.put(Direction.south, new Road(Direction.south));
-        roads.put(Direction.east, new Road(Direction.east));
-        roads.put(Direction.west, new Road(Direction.west));
+        this.context = new SimulationContext();
+        commandServices.put(CommandType.addVehicle, new AddVehicleService());
+        commandServices.put(CommandType.step, new StepService());
+
     }
 
     public void runSimulation() {
 
-        commands.forEach(command -> {
+        for (Command command : commands) {
 
-            try {
-                System.out.println(om.writerWithDefaultPrettyPrinter().writeValueAsString(command));
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-            }
+            CommandService commandService = commandServices.get(command.getType());
 
-            switch (command.getType()) {
-                case addVehicle:
-                    Vehicle vehicle = new Vehicle(command.getVehicleId(), command.getStartRoad(), command.getEndRoad());
-                    Road road = roads.get(command.getStartRoad());
-                    Objects.requireNonNull(road).addVehicle(vehicle);
+            if (commandService == null) throw new RuntimeException("Command type not supported: " + command.getType());
+            commandService.handle(command, context);
 
-                    break;
-                case step:
-                    System.out.println("process step");
-                    break;
+        }
 
-            }
-        });
+
     }
-
-
 
 
 }
