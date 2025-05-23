@@ -1,17 +1,18 @@
 package com.jzielinski.domain.dto;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public class CommandListWrapper {
-    private List<Command> commands;
+    private ArrayList<Command> commands;
 
-    public CommandListWrapper() {}
+    public CommandListWrapper() {
+    }
 
-    public List<Command> getCommands() {
+    public ArrayList<Command> getCommands() {
         return commands;
     }
 
-    public void setCommands(List<Command> commands) {
+    public void setCommands(ArrayList<Command> commands) {
         this.commands = commands;
     }
 }

@@ -3,6 +3,7 @@ package com.jzielinski;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jzielinski.controller.FileController;
+import com.jzielinski.controller.SimulationController;
 import com.jzielinski.domain.dto.CommandListWrapper;
 
 import java.io.DataOutput;
@@ -25,6 +26,9 @@ public class Main {
             CommandListWrapper commands = objectMapper.readValue(Files.newInputStream(fileController.getInput()), CommandListWrapper.class);
             String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(commands);
             System.out.println(json);
+
+            SimulationController simulationController = new SimulationController(commands.getCommands());
+            simulationController.runSimulation();
 
             objectMapper.writerWithDefaultPrettyPrinter().writeValue(Files.newOutputStream(fileController.getOutput()), commands);
 
