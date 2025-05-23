@@ -1,12 +1,11 @@
-package com.jzielinski.service;
+package com.jzielinski.core.handler;
 
 import com.jzielinski.domain.dto.Command;
 import com.jzielinski.domain.model.Road;
 import com.jzielinski.domain.model.SimulationContext;
 import com.jzielinski.domain.model.Vehicle;
-import com.jzielinski.interfaces.CommandHandler;
 
-public class AddVehicleService extends CommandService implements CommandHandler {
+public class AddVehicleHandler extends CommandHandler {
     @Override
     public void handle(Command command, SimulationContext context) {
         Road road = context.getRoads().get(command.getStartRoad());

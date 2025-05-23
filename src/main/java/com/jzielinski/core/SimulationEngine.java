@@ -1,30 +1,30 @@
-package com.jzielinski.controller;
+package com.jzielinski.core;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jzielinski.domain.dto.Command;
 import com.jzielinski.domain.model.SimulationContext;
 import com.jzielinski.enums.CommandType;
-import com.jzielinski.service.AddVehicleService;
-import com.jzielinski.service.CommandService;
-import com.jzielinski.service.StepService;
+import com.jzielinski.core.handler.AddVehicleHandler;
+import com.jzielinski.core.handler.CommandHandler;
+import com.jzielinski.core.handler.StepHandler;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SimulationController {
+public class SimulationEngine {
 
-    private final Map<CommandType, CommandService> commandServices = new HashMap<>();
+    private final Map<CommandType, CommandHandler> commandHandlers = new HashMap<>();
     private final SimulationContext context;
     private final ArrayList<Command> commands;
 
     ObjectMapper om = new ObjectMapper();
 
-    public SimulationController(ArrayList<Command> commands) {
+    public SimulationEngine(ArrayList<Command> commands) {
         this.commands = commands;
         this.context = new SimulationContext();
-        commandServices.put(CommandType.addVehicle, new AddVehicleService());
-        commandServices.put(CommandType.step, new StepService());
+        commandHandlers.put(CommandType.addVehicle, new AddVehicleHandler());
+        commandHandlers.put(CommandType.step, new StepHandler());
 
     }
 
@@ -32,7 +32,7 @@ public class SimulationController {
 
         for (Command command : commands) {
 
-            CommandService commandService = commandServices.get(command.getType());
+            CommandHandler commandService = commandHandlers.get(command.getType());
 
             if (commandService == null) throw new RuntimeException("Command type not supported: " + command.getType());
             commandService.handle(command, context);

@@ -3,10 +3,9 @@ package com.jzielinski;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jzielinski.controller.FileController;
-import com.jzielinski.controller.SimulationController;
+import com.jzielinski.core.SimulationEngine;
 import com.jzielinski.domain.dto.CommandListWrapper;
 
-import java.io.DataOutput;
 import java.nio.file.Files;
 
 
@@ -27,7 +26,7 @@ public class Main {
             String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(commands);
             System.out.println(json);
 
-            SimulationController simulationController = new SimulationController(commands.getCommands());
+            SimulationEngine simulationController = new SimulationEngine(commands.getCommands());
             simulationController.runSimulation();
 
             objectMapper.writerWithDefaultPrettyPrinter().writeValue(Files.newOutputStream(fileController.getOutput()), commands);
