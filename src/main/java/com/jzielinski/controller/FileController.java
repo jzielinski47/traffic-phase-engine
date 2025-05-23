@@ -4,19 +4,19 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class FileController {
-    protected Path input;
-    protected Path output;
+    private final Path input;
+    private final Path output;
 
     public FileController(String input, String output) {
-        if (!isValidJsonPath(input)) {
+        if (isNotValidJsonPath(input)) {
             throw new IllegalArgumentException("Invalid input file path: " + input);
         }
 
-        if (!isValidJsonPath(output)) {
+        if (isNotValidJsonPath(output)) {
             throw new IllegalArgumentException("Invalid output file path: " + output);
         }
 
-        this.input =  Paths.get(input);
+        this.input = Paths.get(input);
         this.output = Paths.get(output);
     }
 
@@ -28,7 +28,7 @@ public class FileController {
         return output;
     }
 
-    private boolean isValidJsonPath(String path) {
-        return path != null && !path.trim().isEmpty() && path.toLowerCase().endsWith(".json");
+    private boolean isNotValidJsonPath(String path) {
+        return path == null || path.trim().isEmpty() || !path.toLowerCase().endsWith(".json");
     }
 }
