@@ -10,7 +10,7 @@ public class AddVehicleHandler extends CommandHandler {
     public void handle(Command command, SimulationContext context) {
         Road road = context.getIntersection().get(command.getStartRoad());
         if (road != null) {
-            Vehicle vehicle = new Vehicle(command.getVehicleId(), command.getStartRoad(), command.getEndRoad());
+            Vehicle vehicle = new Vehicle(command.getVehicleId(), command.getStartRoad(), command.getEndRoad(), context);
             road.addVehicle(vehicle);
             System.out.println("A new vehicle has been added: " + command.getVehicleId() + " to road: " + context.getIntersection().get(command.getStartRoad()));
         }

@@ -3,6 +3,7 @@ package com.jzielinski.domain.model;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jzielinski.enums.Direction;
+import com.jzielinski.enums.Signal;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,5 +48,15 @@ public class SimulationContext {
 
     public void printIntersection() throws JsonProcessingException {
         System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(intersection));
+    }
+
+    public boolean canVehicleMove(Vehicle vehicle) {
+        Signal currentSignal = this.getIntersection().get(vehicle.getOrigin()).getSignal();
+        return Signal.green.equals(currentSignal);
+    }
+
+    public void moveVehicle(Vehicle vehicle) {
+        this.addDepartedVehicle(vehicle);
+        this.getIntersection().get(vehicle.getOrigin()).getQueue().remove(this);
     }
 }

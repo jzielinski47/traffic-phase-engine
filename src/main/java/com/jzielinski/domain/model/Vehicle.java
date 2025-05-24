@@ -1,18 +1,25 @@
 package com.jzielinski.domain.model;
 
 import com.jzielinski.enums.Direction;
+import com.jzielinski.enums.Signal;
 
 public class Vehicle extends AbstractVehicle {
 
-    public Vehicle(String id, Direction origin, Direction destination) {
+    private final int timestamp;
+
+    public Vehicle(String id, Direction origin, Direction destination, SimulationContext context) {
         super(id, origin, destination);
+        this.timestamp = context.getStep();
     }
 
-    public Vehicle(String id, Direction origin, Direction destination, boolean isEmergency) {
+    public Vehicle(String id, Direction origin, Direction destination, SimulationContext context, boolean isEmergency) {
         super(id, origin, destination, isEmergency);
+        this.timestamp = context.getStep();
     }
 
-
+    public int getTimestamp() {
+        return timestamp;
+    }
 
 
 }
