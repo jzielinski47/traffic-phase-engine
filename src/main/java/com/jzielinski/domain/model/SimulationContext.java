@@ -1,5 +1,7 @@
 package com.jzielinski.domain.model;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jzielinski.enums.Direction;
 
 import java.util.ArrayList;
@@ -8,22 +10,23 @@ import java.util.Map;
 
 public class SimulationContext {
 
-    private final Map<Direction, Road> roads;
+    private final Map<Direction, Road> intersection;
     private final ArrayList<Vehicle> departedVehicles;
+    private final ObjectMapper objectMapper = new ObjectMapper();
     private int step;
 
     public SimulationContext() {
         departedVehicles = new ArrayList<>();
-        roads = new HashMap<>();
-        roads.put(Direction.north, new Road(Direction.north));
-        roads.put(Direction.south, new Road(Direction.south));
-        roads.put(Direction.east, new Road(Direction.east));
-        roads.put(Direction.west, new Road(Direction.west));
+        intersection = new HashMap<>();
+        intersection.put(Direction.north, new Road(Direction.north));
+        intersection.put(Direction.south, new Road(Direction.south));
+        intersection.put(Direction.east, new Road(Direction.east));
+        intersection.put(Direction.west, new Road(Direction.west));
         step = 0;
     }
 
-    public Map<Direction, Road> getRoads() {
-        return roads;
+    public Map<Direction, Road> getIntersection() {
+        return intersection;
     }
 
     public ArrayList<Vehicle> getDepartedVehicles() {
@@ -40,5 +43,9 @@ public class SimulationContext {
 
     public void incrementStep(){
         step++;
+    }
+
+    public void printIntersection() throws JsonProcessingException {
+        System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(intersection));
     }
 }

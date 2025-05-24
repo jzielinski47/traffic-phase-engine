@@ -25,4 +25,19 @@ public class Road {
         return temp;
     }
 
+    public Direction getId() {
+        return id;
+    }
+
+    public ArrayList<Vehicle> getQueue() {
+        return queue;
+    }
+
+    public Signal getSignal() {
+        return signal;
+    }
+
+    public void setSignal(Signal signal) {
+        this.signal = signal;
+    }
 }
