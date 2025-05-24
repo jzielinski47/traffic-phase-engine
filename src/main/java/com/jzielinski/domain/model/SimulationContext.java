@@ -50,13 +50,5 @@ public class SimulationContext {
         System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(intersection));
     }
 
-    public boolean canVehicleMove(Vehicle vehicle) {
-        Signal currentSignal = this.getIntersection().get(vehicle.getOrigin()).getSignal();
-        return Signal.green.equals(currentSignal);
-    }
 
-    public void moveVehicle(Vehicle vehicle) {
-        this.addDepartedVehicle(vehicle);
-        this.getIntersection().get(vehicle.getOrigin()).getQueue().remove(this);
-    }
 }

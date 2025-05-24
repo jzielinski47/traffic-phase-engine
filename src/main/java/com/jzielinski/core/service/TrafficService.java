@@ -32,12 +32,11 @@ public class TrafficService {
             road.setSignal(signal);
     }
 
-    public void resolveSignal() {
+    public void runSimulation() {
         Vehicle priorityVehicle = resolvePriorityVehicle();
         setSignal(priorityVehicle.getOrigin(), Signal.green);
-        if (context.canVehicleMove(priorityVehicle)) {
-            context.moveVehicle(priorityVehicle);
-        }
+
+        moveAvailableVehicles();
 
         System.out.println("Priority: " + resolvePriorityVehicle().getId());
     }
@@ -64,6 +63,27 @@ public class TrafficService {
             }
         }
         return selectedVehicle;
+    }
+
+    private final boolean canVehicleMove(Vehicle vehicle) {
+        Signal signal = context.getIntersection().get(vehicle.getOrigin()).getSignal();
+        return signal.equals(Signal.green);
+    }
+
+    private final void moveVehicle(Vehicle vehicle) {
+        context.getDepartedVehicles().add(vehicle);
+        context.getIntersection().get(vehicle.getOrigin()).getQueue().remove(vehicle);
+    }
+
+    private final void moveAvailableVehicles() {
+        for (Map.Entry<Direction, Road> entry : context.getIntersection().entrySet()) {
+            Road road = entry.getValue();
+            if (road.getSignal() == Signal.green && !road.getQueue().isEmpty()) {
+                Vehicle vehicle = road.getQueue().get(0);
+                context.getDepartedVehicles().add(vehicle);
+                road.getQueue().remove(0);
+            }
+        }
     }
 
 }

@@ -1,7 +1,6 @@
 package com.jzielinski.domain.model;
 
 import com.jzielinski.enums.Direction;
-import com.jzielinski.enums.Signal;
 
 public class Vehicle extends AbstractVehicle {
 
@@ -20,6 +19,5 @@ public class Vehicle extends AbstractVehicle {
     public int getTimestamp() {
         return timestamp;
     }
-
 
 }
