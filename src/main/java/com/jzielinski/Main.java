@@ -26,10 +26,10 @@ public class Main {
             String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(commands);
             System.out.println(json);
 
-            SimulationEngine simulationController = new SimulationEngine(commands.getCommands());
-            simulationController.runSimulation();
+            SimulationEngine simulationEngine = new SimulationEngine(commands.getCommands());
+            simulationEngine.runSimulation();
 
-            objectMapper.writerWithDefaultPrettyPrinter().writeValue(Files.newOutputStream(fileController.getOutput()), commands);
+            objectMapper.writerWithDefaultPrettyPrinter().writeValue(Files.newOutputStream(fileController.getOutput()), simulationEngine.getResult());
 
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());

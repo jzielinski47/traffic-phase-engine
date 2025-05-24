@@ -2,8 +2,8 @@ package com.jzielinski.domain.model;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jzielinski.domain.dto.StepStatus;
 import com.jzielinski.enums.Direction;
-import com.jzielinski.enums.Signal;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,12 +12,12 @@ import java.util.Map;
 public class SimulationContext {
 
     private final Map<Direction, Road> intersection;
-    private final ArrayList<Vehicle> departedVehicles;
+    private final ArrayList<StepStatus> stepStatuses;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private int step;
 
     public SimulationContext() {
-        departedVehicles = new ArrayList<>();
+        stepStatuses = new ArrayList<>();
         intersection = new HashMap<>();
         intersection.put(Direction.north, new Road(Direction.north));
         intersection.put(Direction.south, new Road(Direction.south));
@@ -30,16 +30,16 @@ public class SimulationContext {
         return intersection;
     }
 
-    public ArrayList<Vehicle> getDepartedVehicles() {
-        return departedVehicles;
+    public ArrayList<StepStatus> getStepStatuses() {
+        return stepStatuses;
     }
 
     public int getStep() {
         return step;
     }
 
-    public void addDepartedVehicle(Vehicle vehicle) {
-        departedVehicles.add(vehicle);
+    public void addStepStatus(StepStatus status) {
+        stepStatuses.add(status);
     }
 
     public void incrementStep(){

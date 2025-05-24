@@ -1,5 +1,6 @@
 package com.jzielinski.core.service;
 
+import com.jzielinski.domain.dto.StepStatus;
 import com.jzielinski.domain.model.Road;
 import com.jzielinski.domain.model.SimulationContext;
 import com.jzielinski.domain.model.Vehicle;
@@ -16,7 +17,7 @@ public class TrafficService {
     public TrafficService(SimulationContext context) {
         this.context = context;
 
-        setAllSignals(Signal.red);
+        setAllSignals(Signal.green);
     }
 
     private void setAllSignals(Signal signal) {
@@ -34,11 +35,17 @@ public class TrafficService {
 
     public void runSimulation() {
         Vehicle priorityVehicle = resolvePriorityVehicle();
+        if (priorityVehicle == null) {
+            System.out.println("No vehicles waiting at this step.");
+            return;
+        }
+
         setSignal(priorityVehicle.getOrigin(), Signal.green);
 
-        moveAvailableVehicles();
+        StepStatus stepStatus = new StepStatus(getMovedVehicles());
+        context.addStepStatus(stepStatus);
 
-        System.out.println("Priority: " + resolvePriorityVehicle().getId());
+        System.out.println("Priority: " + priorityVehicle.getId());
     }
 
     private Vehicle resolvePriorityVehicle() {
@@ -70,20 +77,19 @@ public class TrafficService {
         return signal.equals(Signal.green);
     }
 
-    private final void moveVehicle(Vehicle vehicle) {
-        context.getDepartedVehicles().add(vehicle);
-        context.getIntersection().get(vehicle.getOrigin()).getQueue().remove(vehicle);
-    }
-
-    private final void moveAvailableVehicles() {
+    private final ArrayList<String> getMovedVehicles() {
+        ArrayList<String> leftVehicles = new ArrayList<>();
         for (Map.Entry<Direction, Road> entry : context.getIntersection().entrySet()) {
             Road road = entry.getValue();
-            if (road.getSignal() == Signal.green && !road.getQueue().isEmpty()) {
+            if (!road.getQueue().isEmpty()) {
                 Vehicle vehicle = road.getQueue().get(0);
-                context.getDepartedVehicles().add(vehicle);
-                road.getQueue().remove(0);
+                if(canVehicleMove(vehicle)) {
+                    leftVehicles.add(vehicle.getId());
+                    road.getQueue().remove(0);
+                }
             }
         }
+        return leftVehicles;
     }
 
 }
