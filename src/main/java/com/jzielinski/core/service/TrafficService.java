@@ -13,8 +13,10 @@ import java.util.Set;
 public class TrafficService {
 
     private final SimulationContext context;
-    private final RouteConflictMap routeConflictMap = new RouteConflictMap();
-
+    private final RouteConflictMap routeConflictMap;
+    {
+        routeConflictMap = new RouteConflictMap();
+    }
     public TrafficService(SimulationContext context) {
         this.context = context;
 
@@ -49,10 +51,18 @@ public class TrafficService {
         }
 
         Route priorityVehiclesRoute = new Route(priorityVehicle.getOrigin(), priorityVehicle.getDestination());
+        Set<Route> compatibleRoutes = routeConflictMap
+                .getCompatibleRoutesMap()
+                .getOrDefault(priorityVehiclesRoute, Set.of());
+
         Set<Route> activeGreenRoutes = new HashSet<>();
+        if (compatibleRoutes != null) {
+            compatibleRoutes.forEach(route -> setGreenSignal(route, activeGreenRoutes));
+        }
+
 
         setGreenSignal(priorityVehiclesRoute, activeGreenRoutes);
-        routeConflictMap.getCompatibleRoutesMap().get(priorityVehiclesRoute).forEach(route -> {
+        compatibleRoutes.forEach(route -> {
             setGreenSignal(route, activeGreenRoutes);
         });
         setSignal(priorityVehicle.getOrigin(), Signal.green);
