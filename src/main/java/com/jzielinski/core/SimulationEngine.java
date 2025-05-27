@@ -1,16 +1,12 @@
 package com.jzielinski.core;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jzielinski.core.handler.AddVehicleHandler;
 import com.jzielinski.core.handler.CommandHandler;
 import com.jzielinski.core.handler.StepHandler;
 import com.jzielinski.domain.dto.Command;
 import com.jzielinski.domain.dto.SimulationResult;
-import com.jzielinski.domain.model.Road;
 import com.jzielinski.domain.model.SimulationContext;
-import com.jzielinski.domain.model.Vehicle;
 import com.jzielinski.enums.CommandType;
-import com.jzielinski.enums.Signal;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,8 +41,6 @@ public class SimulationEngine {
         this.result.setStepStatuses(context.getStepStatuses());
 
     }
-
-
 
     public SimulationResult getResult() {
         return result;

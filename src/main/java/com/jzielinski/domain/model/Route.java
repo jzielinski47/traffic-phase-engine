@@ -4,10 +4,6 @@ import com.jzielinski.enums.Direction;
 
 public class Route {
 
-    enum Maneuver {
-        U_TURN, STRAIGHT, RIGHT_TURN, LEFT_TURN,
-    }
-
     private final Direction origin;
     private final Direction destination;
     private final Maneuver maneuver;
@@ -60,5 +56,9 @@ public class Route {
 
     public Maneuver getManeuver() {
         return maneuver;
+    }
+
+    enum Maneuver {
+        U_TURN, STRAIGHT, RIGHT_TURN, LEFT_TURN,
     }
 }

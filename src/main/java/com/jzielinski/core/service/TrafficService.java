@@ -2,6 +2,7 @@ package com.jzielinski.core.service;
 
 import com.jzielinski.domain.dto.StepStatus;
 import com.jzielinski.domain.model.Road;
+import com.jzielinski.domain.model.RouteConflictMap;
 import com.jzielinski.domain.model.SimulationContext;
 import com.jzielinski.domain.model.Vehicle;
 import com.jzielinski.enums.Direction;
@@ -13,6 +14,7 @@ import java.util.Map;
 public class TrafficService {
 
     private final SimulationContext context;
+    private final RouteConflictMap routeConflictMap = new RouteConflictMap();
 
     public TrafficService(SimulationContext context) {
         this.context = context;
@@ -34,7 +36,7 @@ public class TrafficService {
     }
 
     public void runSimulation() {
-        Vehicle priorityVehicle = resolvePriorityVehicle();
+        Vehicle priorityVehicle = findPriorityVehicle();
         if (priorityVehicle == null) {
             System.out.println("No vehicles waiting at this step.");
             return;
@@ -48,9 +50,8 @@ public class TrafficService {
         System.out.println("Priority: " + priorityVehicle.getId());
     }
 
-    private Vehicle resolvePriorityVehicle() {
+    private Vehicle findPriorityVehicle() {
         int timestamp = context.getStep();
-        int queueSize = 0;
         Vehicle selectedVehicle = null;
         Map<Direction, Road> intersection = context.getIntersection();
         for (Map.Entry<Direction, Road> entry : intersection.entrySet()) {
@@ -59,11 +60,6 @@ public class TrafficService {
                 Vehicle vehicle = entry.getValue().getQueue().get(0);
                 int vehicleAge = vehicle.getTimestamp();
                 if (vehicleAge < timestamp) {
-                    selectedVehicle = vehicle;
-                    timestamp = vehicleAge;
-                }
-                if (queue.size() > queueSize) {
-                    queueSize = queue.size();
                     selectedVehicle = vehicle;
                     timestamp = vehicleAge;
                 }
