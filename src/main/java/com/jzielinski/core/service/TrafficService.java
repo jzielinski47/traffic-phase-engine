@@ -1,15 +1,14 @@
 package com.jzielinski.core.service;
 
 import com.jzielinski.domain.dto.StepStatus;
-import com.jzielinski.domain.model.Road;
-import com.jzielinski.domain.model.RouteConflictMap;
-import com.jzielinski.domain.model.SimulationContext;
-import com.jzielinski.domain.model.Vehicle;
+import com.jzielinski.domain.model.*;
 import com.jzielinski.enums.Direction;
 import com.jzielinski.enums.Signal;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class TrafficService {
 
@@ -35,6 +34,13 @@ public class TrafficService {
             road.setSignal(signal);
     }
 
+    private void setGreenSignal(Route _route, Set<Route> activeGreenRoutes) {
+        if (!activeGreenRoutes.contains(_route)) {
+            activeGreenRoutes.add(_route);
+            setSignal(_route.getOrigin(), Signal.green);
+        }
+    }
+
     public void runSimulation() {
         Vehicle priorityVehicle = findPriorityVehicle();
         if (priorityVehicle == null) {
@@ -42,6 +48,13 @@ public class TrafficService {
             return;
         }
 
+        Route priorityVehiclesRoute = new Route(priorityVehicle.getOrigin(), priorityVehicle.getDestination());
+        Set<Route> activeGreenRoutes = new HashSet<>();
+
+        setGreenSignal(priorityVehiclesRoute, activeGreenRoutes);
+        routeConflictMap.getCompatibleRoutesMap().get(priorityVehiclesRoute).forEach(route -> {
+            setGreenSignal(route, activeGreenRoutes);
+        });
         setSignal(priorityVehicle.getOrigin(), Signal.green);
 
         StepStatus stepStatus = new StepStatus(getMovedVehicles());
