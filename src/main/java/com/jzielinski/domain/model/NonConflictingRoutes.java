@@ -2,17 +2,15 @@ package com.jzielinski.domain.model;
 
 import com.jzielinski.enums.Direction;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 public class NonConflictingRoutes {
 
-    static Map<Route, Set<Route>> nonConflictingRoutes;
+    static Map<Route, HashSet<Route>> nonConflictingRoutes;
 
     static {
-        nonConflictingRoutes = new HashMap<>();
 
         Route northEast = new Route(Direction.north, Direction.east);
         Route northSouth = new Route(Direction.north, Direction.south);
@@ -27,14 +25,6 @@ public class NonConflictingRoutes {
         Route westEast = new Route(Direction.west, Direction.east);
         Route westSouth = new Route(Direction.west, Direction.south);
 
-        // NATIVE: STRAIGHT
-        nonConflictingRoutes.put(southNorth, Set.of(northSouth, southEast, southWest, northWest, westSouth));
-        nonConflictingRoutes.put(northSouth, Set.of(southNorth, northWest, southEast, northEast, eastNorth));
-        nonConflictingRoutes.put(westEast, Set.of(eastWest, eastNorth, westSouth, westNorth, northWest));
-        nonConflictingRoutes.put(eastWest, Set.of(westEast, westSouth, eastNorth, eastSouth, southEast));
-
-        // NATIVE: RIGHT TURN
-
 
     }
 
@@ -42,14 +32,32 @@ public class NonConflictingRoutes {
 
         Set<Route> routeHashSet = new HashSet<>();
 
+        Direction oppositeDirection = resolveRelativeDirection(route.getOrigin(), RelativeDirection.STRAIGHT);
+        Direction directionLeft = resolveRelativeDirection(route.getOrigin(), RelativeDirection.LEFT);
+        Direction directionRight = resolveRelativeDirection(route.getOrigin(), RelativeDirection.RIGHT);
+
         switch (route.getManeuver()) {
             case STRAIGHT:
-                /* TODO: Make a set of:
-                 * - Right and Left turn from this direction
-                 * - Straight and Right turn from opposite direction
-                 * - Right turn from direction on the left
-                 * - Optional: Green Arrow for the direction from the right.
-                 * */
+
+                // TODO: Right and Left turn from this direction
+                Route rightTurn = new Route(route.getOrigin(), directionRight);
+                Route leftTurn = new Route(route.getOrigin(), directionLeft);
+
+                // TODO: Straight and Right turn from opposite direction
+                Route oppositeStraight = new Route(oppositeDirection, route.getOrigin());
+                Route oppositeRightTurn = new Route(oppositeDirection, resolveRelativeDirection(oppositeDirection, RelativeDirection.RIGHT));
+
+                // TODO: Right turn from direction on the left
+                Route leftRightTurn = new Route(directionLeft, resolveRelativeDirection(directionLeft, RelativeDirection.RIGHT));
+
+                // TODO: Optional: Green Arrow for the direction on the right
+
+                routeHashSet.add(rightTurn);
+                routeHashSet.add(leftTurn);
+                routeHashSet.add(oppositeStraight);
+                routeHashSet.add(oppositeRightTurn);
+                routeHashSet.add(leftRightTurn);
+
                 break;
             case RIGHT_TURN:
                 /* TODO: Make a set of:
@@ -61,6 +69,8 @@ public class NonConflictingRoutes {
                  *
                  * so to conclude all except for the straight from the left direction's STRAIGHT
                  * */
+
+
                 break;
             case LEFT_TURN:
                 /* TODO: Make a set of:
@@ -82,6 +92,22 @@ public class NonConflictingRoutes {
 
         return routeHashSet;
 
+    }
+
+    private enum RelativeDirection {
+        LEFT, STRAIGHT, RIGHT
+    }
+
+    private final Direction resolveRelativeDirection(Direction direction, RelativeDirection relativeDirection) {
+
+        int move = switch (relativeDirection) {
+            case LEFT -> 1;
+            case STRAIGHT -> -2;
+            case RIGHT -> -1;
+            default -> 0;
+        };
+
+        return Direction.values()[(direction.ordinal() + move + 4) % 4];
     }
 
 
