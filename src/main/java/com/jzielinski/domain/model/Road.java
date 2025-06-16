@@ -61,6 +61,7 @@ public class Road {
     }
 
     public void setSignal(Route route, Signal _signal) {
+        System.out.println("Requested change of signal on road: " + route.getOrigin() + " " + route.getDestination() + " for " + _signal);
         TrafficLight signal = this.trafficLights.get(route);
         if (signal != null) signal.setSignal(_signal);
     }

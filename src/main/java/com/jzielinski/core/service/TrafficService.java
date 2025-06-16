@@ -38,15 +38,24 @@ public class TrafficService {
             road.setSignal(route, signal);
     }
 
-    private void setGreenSignal(Route _route, Set<Route> activeGreenRoutes) {
-        if (activeGreenRoutes.contains(_route)) return;
-        activeGreenRoutes.add(_route);
+    private boolean requestGreenSignal(Route route, Set<Route> activeGreenRoutes) {
 
-        setSignal(_route, Signal.green);
+        if (activeGreenRoutes.contains(route)) return false;
+        Set<Route> compatibleRoutes = routeConflictMap
+                .getCompatibleRoutesMap()
+                .getOrDefault(route, Set.of());
 
+        for (Route r : activeGreenRoutes) {
+            if(!compatibleRoutes.contains(r))
+                return false;
+        }
+
+        activeGreenRoutes.add(route);
+        setSignal(route, Signal.green);
+        return true;
     }
 
-    private void setGreenSignal(Route _route) {
+    private void requestGreenSignal(Route _route) {
         setSignal(_route, Signal.green);
     }
 
@@ -63,9 +72,9 @@ public class TrafficService {
                 .getOrDefault(priorityVehiclesRoute, Set.of());
 
         Set<Route> activeGreenRoutes = new HashSet<>(); // a temporary set to store all routes with active green lights
-        setGreenSignal(priorityVehiclesRoute);
+        requestGreenSignal(priorityVehiclesRoute);
         if (!compatibleRoutes.isEmpty()) {
-            compatibleRoutes.forEach(route -> setGreenSignal(route, activeGreenRoutes));
+            compatibleRoutes.forEach(route -> requestGreenSignal(route, activeGreenRoutes));
         }
 
         StepStatus stepStatus = new StepStatus(getMovedVehicles());
@@ -95,7 +104,7 @@ public class TrafficService {
 
     private final boolean canVehicleMove(Vehicle vehicle) {
         Route vehiclesRoute = new Route(vehicle.getOrigin(), vehicle.getDestination());
-        System.out.println("vehilce "+ vehicle.getId() + " tries to access traffic lights of " + vehicle.getOrigin() + " on direction " + vehicle.getDestination());
+//        System.out.println("vehilce "+ vehicle.getId() + " tries to access traffic lights of " + vehicle.getOrigin() + " on direction " + vehicle.getDestination());
         Signal signal = context.getIntersection().get(vehicle.getOrigin()).getSignal(vehiclesRoute);
         return signal.equals(Signal.green);
     }
