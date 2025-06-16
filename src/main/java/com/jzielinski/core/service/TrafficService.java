@@ -14,49 +14,13 @@ public class TrafficService {
 
     private final SimulationContext context;
     private final RouteConflictMap routeConflictMap;
-
-    {
-        routeConflictMap = new RouteConflictMap();
-    }
+    private final TrafficLightService trafficLightService;
 
     public TrafficService(SimulationContext context) {
         this.context = context;
-
-        setAllSignals(Signal.green);
-    }
-
-    private void setAllSignals(Signal signal) {
-        Map<Direction, Road> intersection = context.getIntersection();
-        for (Map.Entry<Direction, Road> entry : intersection.entrySet()) {
-            entry.getValue().setAllSignals(signal);
-        }
-    }
-
-    private void setSignal(Route route, Signal signal) {
-        Road road = context.getIntersection().get(route.getOrigin());
-        if (road != null)
-            road.setSignal(route, signal);
-    }
-
-    private boolean requestGreenSignal(Route route, Set<Route> activeGreenRoutes) {
-
-        if (activeGreenRoutes.contains(route)) return false;
-        Set<Route> compatibleRoutes = routeConflictMap
-                .getCompatibleRoutesMap()
-                .getOrDefault(route, Set.of());
-
-        for (Route r : activeGreenRoutes) {
-            if(!compatibleRoutes.contains(r))
-                return false;
-        }
-
-        activeGreenRoutes.add(route);
-        setSignal(route, Signal.green);
-        return true;
-    }
-
-    private void requestGreenSignal(Route _route) {
-        setSignal(_route, Signal.green);
+        routeConflictMap = new RouteConflictMap();
+        trafficLightService = new TrafficLightService(context, routeConflictMap);
+        trafficLightService.setAllSignals(Signal.red);
     }
 
     public void runSimulation() {
@@ -72,16 +36,16 @@ public class TrafficService {
                 .getOrDefault(priorityVehiclesRoute, Set.of());
 
         Set<Route> activeGreenRoutes = new HashSet<>(); // a temporary set to store all routes with active green lights
-        requestGreenSignal(priorityVehiclesRoute);
+        trafficLightService.grantGreenIfCompatible(priorityVehiclesRoute);
         if (!compatibleRoutes.isEmpty()) {
-            compatibleRoutes.forEach(route -> requestGreenSignal(route, activeGreenRoutes));
+            compatibleRoutes.forEach(route -> trafficLightService.grantGreenIfCompatible(route, activeGreenRoutes));
         }
 
-        StepStatus stepStatus = new StepStatus(getMovedVehicles());
+        StepStatus stepStatus = new StepStatus(moveEligibleVehiclesAndReturnIds());
         context.addStepStatus(stepStatus);
 
-        setAllSignals(Signal.red);
-//        System.out.println("Priority: " + priorityVehicle.getId());
+        trafficLightService.setAllSignals(Signal.red);
+
     }
 
     private Vehicle findPriorityVehicle() {
@@ -102,14 +66,13 @@ public class TrafficService {
         return selectedVehicle;
     }
 
-    private final boolean canVehicleMove(Vehicle vehicle) {
+    private boolean canVehicleMove(Vehicle vehicle) {
         Route vehiclesRoute = new Route(vehicle.getOrigin(), vehicle.getDestination());
-//        System.out.println("vehilce "+ vehicle.getId() + " tries to access traffic lights of " + vehicle.getOrigin() + " on direction " + vehicle.getDestination());
         Signal signal = context.getIntersection().get(vehicle.getOrigin()).getSignal(vehiclesRoute);
         return signal.equals(Signal.green);
     }
 
-    private final ArrayList<String> getMovedVehicles() {
+    private ArrayList<String> moveEligibleVehiclesAndReturnIds() {
         ArrayList<String> leftVehicles = new ArrayList<>();
         for (Map.Entry<Direction, Road> entry : context.getIntersection().entrySet()) {
             Road road = entry.getValue();
