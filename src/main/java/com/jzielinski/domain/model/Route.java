@@ -1,6 +1,7 @@
 package com.jzielinski.domain.model;
 
 import com.jzielinski.enums.Direction;
+import com.jzielinski.enums.RelativeDirection;
 
 public class Route {
 
@@ -61,4 +62,6 @@ public class Route {
     enum Maneuver {
         U_TURN, STRAIGHT, RIGHT_TURN, LEFT_TURN,
     }
+
+
 }

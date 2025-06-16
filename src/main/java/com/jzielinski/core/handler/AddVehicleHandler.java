@@ -12,7 +12,7 @@ public class AddVehicleHandler extends CommandHandler {
         if (road != null) {
             Vehicle vehicle = new Vehicle(command.getVehicleId(), command.getStartRoad(), command.getEndRoad(), context);
             road.addVehicle(vehicle);
-            System.out.println("A new vehicle: " + command.getVehicleId() + " has been added to road: " + context.getIntersection().get(command.getStartRoad()).getId());
+            System.out.println("A new vehicle: " + command.getVehicleId() + " has been added to road: " + context.getIntersection().get(command.getStartRoad()).getOrigin());
         }
         context.incrementStep();
     }

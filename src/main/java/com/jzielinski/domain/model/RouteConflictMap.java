@@ -8,6 +8,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import static com.jzielinski.utils.DirectionUtils.relativeTo;
+
 public class RouteConflictMap {
 
     Map<Route, Set<Route>> compatibleRoutesMap;
@@ -21,7 +23,7 @@ public class RouteConflictMap {
         return compatibleRoutesMap;
     }
 
-    private final void initCompatibleRoutes() {
+    private void initCompatibleRoutes() {
         Route northEast = new Route(Direction.north, Direction.east);
         Route northSouth = new Route(Direction.north, Direction.south);
         Route northWest = new Route(Direction.north, Direction.west);
@@ -41,7 +43,7 @@ public class RouteConflictMap {
         }
     }
 
-    private final Set<Route> findCompatibleRoutes(Route route) {
+    private Set<Route> findCompatibleRoutes(Route route) {
 
         Set<Route> compatibleRoutes = new HashSet<>();
 
@@ -104,18 +106,6 @@ public class RouteConflictMap {
         }
 
         return compatibleRoutes;
-    }
-
-    private final Direction relativeTo(Direction direction, RelativeDirection relativeDirection) {
-
-        int move = switch (relativeDirection) {
-            case LEFT -> 1;
-            case STRAIGHT -> -2;
-            case RIGHT -> -1;
-            default -> 0;
-        };
-        Direction[] directions = Direction.values();
-        return directions[(direction.ordinal() + move + 4) % 4];
     }
 
     private Route createRoute(Direction origin, Direction destination) {
