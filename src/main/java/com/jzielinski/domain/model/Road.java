@@ -13,24 +13,25 @@ public class Road {
 
     protected Direction origin;
     protected ArrayList<Vehicle> queue = new ArrayList<>();
-
     protected HashMap<Route, TrafficLight> trafficLights;
-    protected Signal signal = Signal.off;
 
     public Road(Direction origin) {
         this.origin = origin;
 
+        trafficLights = new HashMap<>();
         addTrafficLight(RelativeDirection.STRAIGHT);
         addTrafficLight(RelativeDirection.LEFT);
         addTrafficLight(RelativeDirection.RIGHT);
+
     }
 
-    private  void addTrafficLight (RelativeDirection dir) {
+    private void addTrafficLight(RelativeDirection dir) {
         Direction destination = relativeTo(this.origin, dir);
         Route route = new Route(this.origin, destination);
-        trafficLights.put(route, new TrafficLight(route));
+        TrafficLight trafficLight = new TrafficLight(route);
+        trafficLight.setSignal(Signal.off);
+        trafficLights.put(route, trafficLight);
     }
-
 
     public void addVehicle(Vehicle vehicle) {
         queue.add(vehicle);
@@ -50,25 +51,23 @@ public class Road {
         return queue;
     }
 
-    public Signal getSignal() {
-        return signal;
+    public Signal getSignal(Route route) {
+        TrafficLight trafficLight = trafficLights.get(route);
+
+        if (trafficLight == null)
+            throw new IllegalArgumentException("\n\nRoad " + this.origin + ", No traffic light for route: " + route.getOrigin() + " " + route.getDestination());
+
+        return trafficLight.getSignal();
     }
 
-    public void setSignal(Signal signal) {
-        this.signal = signal;
+    public void setSignal(Route route, Signal _signal) {
+        TrafficLight signal = this.trafficLights.get(route);
+        if (signal != null) signal.setSignal(_signal);
     }
 
-    public Signal getTrafficLight(Route route) {
-        return trafficLights.get(route).getSignal();
-    }
-
-    public void setTrafficLight(Route route, Signal signal) {
-        this.trafficLights.get(route).setSignal(signal);
-    }
-
-    public void setAllTrafficLights(Signal signal) {
-        for(TrafficLight trafficLight : this.trafficLights.values()) {
+    public void setAllSignals(Signal signal) {
+        for (TrafficLight trafficLight : this.trafficLights.values()) {
             trafficLight.setSignal(signal);
-        };
+        }
     }
 }

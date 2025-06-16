@@ -20,6 +20,7 @@ public class Main {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         try {
+
             FileController fileController = new FileController(args[0], args[1]);
 
             CommandListWrapper commands = objectMapper.readValue(Files.newInputStream(fileController.getInput()), CommandListWrapper.class);
@@ -32,8 +33,8 @@ public class Main {
             objectMapper.writerWithDefaultPrettyPrinter().writeValue(Files.newOutputStream(fileController.getOutput()), simulationEngine.getResult());
 
         } catch (Exception e) {
-            System.err.println("Error: " + e.getMessage());
             e.printStackTrace();
+            System.err.println("Error: " + e.getMessage());
             System.exit(1);
         }
 

@@ -63,5 +63,15 @@ public class Route {
         U_TURN, STRAIGHT, RIGHT_TURN, LEFT_TURN,
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof Route other)) return false;
+        return origin == other.origin && destination == other.destination;
+    }
 
+    @Override
+    public int hashCode() {
+        return 31 * origin.hashCode() + destination.hashCode();
+    }
 }

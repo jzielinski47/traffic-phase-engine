@@ -28,14 +28,14 @@ public class TrafficService {
     private void setAllSignals(Signal signal) {
         Map<Direction, Road> intersection = context.getIntersection();
         for (Map.Entry<Direction, Road> entry : intersection.entrySet()) {
-            entry.getValue().setAllTrafficLights(signal);
+            entry.getValue().setAllSignals(signal);
         }
     }
 
     private void setSignal(Route route, Signal signal) {
         Road road = context.getIntersection().get(route.getOrigin());
         if (road != null)
-            road.setTrafficLight(route, signal);
+            road.setSignal(route, signal);
     }
 
     private void setGreenSignal(Route _route, Set<Route> activeGreenRoutes) {
@@ -63,7 +63,6 @@ public class TrafficService {
                 .getOrDefault(priorityVehiclesRoute, Set.of());
 
         Set<Route> activeGreenRoutes = new HashSet<>(); // a temporary set to store all routes with active green lights
-        setGreenSignal(priorityVehiclesRoute, activeGreenRoutes);
         setGreenSignal(priorityVehiclesRoute);
         if (!compatibleRoutes.isEmpty()) {
             compatibleRoutes.forEach(route -> setGreenSignal(route, activeGreenRoutes));
@@ -72,7 +71,8 @@ public class TrafficService {
         StepStatus stepStatus = new StepStatus(getMovedVehicles());
         context.addStepStatus(stepStatus);
 
-        System.out.println("Priority: " + priorityVehicle.getId());
+        setAllSignals(Signal.red);
+//        System.out.println("Priority: " + priorityVehicle.getId());
     }
 
     private Vehicle findPriorityVehicle() {
@@ -95,7 +95,8 @@ public class TrafficService {
 
     private final boolean canVehicleMove(Vehicle vehicle) {
         Route vehiclesRoute = new Route(vehicle.getOrigin(), vehicle.getDestination());
-        Signal signal = context.getIntersection().get(vehicle.getOrigin()).getTrafficLight(vehiclesRoute);
+        System.out.println("vehilce "+ vehicle.getId() + " tries to access traffic lights of " + vehicle.getOrigin() + " on direction " + vehicle.getDestination());
+        Signal signal = context.getIntersection().get(vehicle.getOrigin()).getSignal(vehiclesRoute);
         return signal.equals(Signal.green);
     }
 
