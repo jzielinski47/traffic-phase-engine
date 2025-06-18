@@ -27,7 +27,7 @@ public class TrafficService {
         vehicleMovementService = new VehicleMovementService(context);
     }
 
-    public void runSimulation() {
+    public void runStep() {
 
         Vehicle priorityVehicle = vehiclePriorityService.findPriorityVehicle();
 

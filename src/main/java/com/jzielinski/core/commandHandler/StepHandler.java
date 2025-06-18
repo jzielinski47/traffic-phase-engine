@@ -11,7 +11,7 @@ public class StepHandler extends CommandHandler {
     public void handle(Command command, SimulationContext context) {
 
         TrafficService trafficService = new TrafficService(context);
-        trafficService.runSimulation();
+        trafficService.runStep();
 
         try {
             System.out.println("Step: " + context.getStep());
