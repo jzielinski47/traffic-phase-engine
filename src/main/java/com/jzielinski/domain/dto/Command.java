@@ -10,6 +10,7 @@ public class Command {
     protected String vehicleId;
     protected Direction startRoad;
     protected Direction endRoad;
+    protected boolean emergency = false;
 
     @JsonCreator
     public Command(
@@ -20,6 +21,7 @@ public class Command {
     ) {
         this.type = type;
         this.vehicleId = vehicleId;
+        this.emergency = vehicleId != null && vehicleId.toLowerCase().contains("emergency");
         this.startRoad = startRoad;
         this.endRoad = endRoad;
     }
@@ -28,32 +30,20 @@ public class Command {
         return type;
     }
 
-    public void setType(CommandType type) {
-        this.type = type;
-    }
-
     public String getVehicleId() {
         return vehicleId;
-    }
-
-    public void setVehicleId(String vehicleId) {
-        this.vehicleId = vehicleId;
     }
 
     public Direction getStartRoad() {
         return startRoad;
     }
 
-    public void setStartRoad(Direction startRoad) {
-        this.startRoad = startRoad;
-    }
-
     public Direction getEndRoad() {
         return endRoad;
     }
 
-    public void setEndRoad(Direction endRoad) {
-        this.endRoad = endRoad;
+    public boolean isEmergency() {
+        return emergency;
     }
 
     public void validate() {

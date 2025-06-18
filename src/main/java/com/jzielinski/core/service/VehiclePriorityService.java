@@ -1,7 +1,6 @@
 package com.jzielinski.core.service;
 
 import com.jzielinski.domain.model.Road;
-import com.jzielinski.domain.model.RouteConflictMap;
 import com.jzielinski.domain.model.SimulationContext;
 import com.jzielinski.domain.model.Vehicle;
 import com.jzielinski.enums.Direction;
@@ -21,15 +20,26 @@ public class VehiclePriorityService {
         int timestamp = context.getStep();
         Vehicle selectedVehicle = null;
         Map<Direction, Road> intersection = context.getIntersection();
-        for (Map.Entry<Direction, Road> entry : intersection.entrySet()) {
-            ArrayList<Vehicle> queue = entry.getValue().getQueue();
-            if (!queue.isEmpty()) {
-                Vehicle vehicle = entry.getValue().getQueue().get(0);
-                int vehicleAge = vehicle.getTimestamp();
-                if (vehicleAge < timestamp) {
-                    selectedVehicle = vehicle;
-                    timestamp = vehicleAge;
+
+        for (Map.Entry<Direction, Road> roadEntry : intersection.entrySet()) {
+
+            Road road = roadEntry.getValue();
+            ArrayList<Vehicle> queue = road.getQueue();
+
+            if (queue.isEmpty()) continue;
+            if(roadEntry.getValue().isEmergencyPresent()) {
+                for(Vehicle vehicle : queue) {
+                    if(vehicle.isEmergency()) {
+                        return vehicle;
+                    }
                 }
+            }
+
+            Vehicle vehicle = roadEntry.getValue().getQueue().get(0);
+            int vehicleAge = vehicle.getTimestamp();
+            if (vehicleAge < timestamp) {
+                selectedVehicle = vehicle;
+                timestamp = vehicleAge;
             }
         }
         return selectedVehicle;

@@ -14,6 +14,7 @@ public class Road {
     protected Direction origin;
     protected ArrayList<Vehicle> queue = new ArrayList<>();
     protected HashMap<Route, TrafficLight> trafficLights;
+    private boolean isEmergency = false;
 
     public Road(Direction origin) {
         this.origin = origin;
@@ -70,5 +71,14 @@ public class Road {
         for (TrafficLight trafficLight : this.trafficLights.values()) {
             trafficLight.setSignal(signal);
         }
+    }
+
+    public boolean isEmergencyPresent() {
+        if (queue.isEmpty()) return false;
+        return isEmergency;
+    }
+
+    public void setEmergency(boolean emergency) {
+        isEmergency = emergency;
     }
 }
