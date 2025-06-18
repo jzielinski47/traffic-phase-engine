@@ -7,6 +7,12 @@
       "endRoad": "north"
     },
     {
+      "type": "adVehicle",
+      "vehicleId": "vehicle1",
+      "startRoad": "south",
+      "endRoad": "north"
+    },
+    {
       "type": "addVehicle",
       "vehicleId": "vehicle2",
       "startRoad": "north",

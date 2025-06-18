@@ -1,4 +1,4 @@
-package com.jzielinski.core.handler;
+package com.jzielinski.core.commandHandler;
 
 import com.jzielinski.domain.dto.Command;
 import com.jzielinski.domain.model.SimulationContext;

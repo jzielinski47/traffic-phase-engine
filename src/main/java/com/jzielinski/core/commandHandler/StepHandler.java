@@ -1,4 +1,4 @@
-package com.jzielinski.core.handler;
+package com.jzielinski.core.commandHandler;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.jzielinski.core.service.TrafficService;

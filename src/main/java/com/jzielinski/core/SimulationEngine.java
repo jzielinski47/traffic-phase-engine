@@ -1,8 +1,8 @@
 package com.jzielinski.core;
 
-import com.jzielinski.core.handler.AddVehicleHandler;
-import com.jzielinski.core.handler.CommandHandler;
-import com.jzielinski.core.handler.StepHandler;
+import com.jzielinski.core.commandHandler.AddVehicleHandler;
+import com.jzielinski.core.commandHandler.CommandHandler;
+import com.jzielinski.core.commandHandler.StepHandler;
 import com.jzielinski.domain.dto.Command;
 import com.jzielinski.domain.dto.SimulationResult;
 import com.jzielinski.domain.model.SimulationContext;
@@ -31,8 +31,9 @@ public class SimulationEngine {
 
         for (Command command : commands) {
 
+            command.validate();
             CommandHandler commandService = commandHandlers.get(command.getType());
-            if (commandService == null) throw new RuntimeException("Command type not supported: " + command.getType());
+
 
             commandService.handle(command, context);
 

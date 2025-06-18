@@ -12,7 +12,4 @@ public class CommandListWrapper {
         return commands;
     }
 
-    public void setCommands(ArrayList<Command> commands) {
-        this.commands = commands;
-    }
 }

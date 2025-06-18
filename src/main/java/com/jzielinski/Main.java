@@ -1,15 +1,19 @@
 package com.jzielinski;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jzielinski.controller.FileController;
 import com.jzielinski.core.SimulationEngine;
 import com.jzielinski.domain.dto.CommandListWrapper;
 
-import java.nio.file.Files;
+import java.util.ArrayList;
 
 
 public class Main {
+
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
     public static void main(String[] args) {
 
         if (args.length < 2) {
@@ -17,20 +21,17 @@ public class Main {
             System.exit(1);
         }
 
-        ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+
         try {
 
             FileController fileController = new FileController(args[0], args[1]);
-
-            CommandListWrapper commands = objectMapper.readValue(Files.newInputStream(fileController.getInput()), CommandListWrapper.class);
-            String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(commands);
-            System.out.println(json);
+            CommandListWrapper commands = fileController.readInput();
 
             SimulationEngine simulationEngine = new SimulationEngine(commands.getCommands());
             simulationEngine.runSimulation();
 
-            objectMapper.writerWithDefaultPrettyPrinter().writeValue(Files.newOutputStream(fileController.getOutput()), simulationEngine.getResult());
+            fileController.writeOutput(simulationEngine.getResult());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -38,6 +39,10 @@ public class Main {
             System.exit(1);
         }
 
+    }
 
+    private static <T> void printJSON(ArrayList<T> arr) throws JsonProcessingException {
+        String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(arr);
+        System.out.println(json);
     }
 }

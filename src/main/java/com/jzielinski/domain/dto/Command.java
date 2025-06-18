@@ -1,7 +1,6 @@
 package com.jzielinski.domain.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.jzielinski.enums.CommandType;
 import com.jzielinski.enums.Direction;
@@ -56,4 +55,20 @@ public class Command {
     public void setEndRoad(Direction endRoad) {
         this.endRoad = endRoad;
     }
+
+    public void validate() {
+        switch (type) {
+            case addVehicle -> {
+                if (vehicleId == null || startRoad == null || endRoad == null) {
+                    throw new IllegalArgumentException("ADD_VEHICLE requires vehicleId, startRoad, and endRoad.");
+                }
+                break;
+            }
+            case step -> {
+                break;
+            }
+            default -> throw new IllegalArgumentException("Command type not supported: " + type);
+        }
+    }
+
 }
