@@ -20,14 +20,14 @@ public class TrafficLightService {
         this.routeConflictMap = routeConflictMap;
     }
 
-    void setAllSignals(Signal signal) {
+    protected void setAllSignals(Signal signal) {
         Map<Direction, Road> intersection = context.getIntersection();
         for (Map.Entry<Direction, Road> entry : intersection.entrySet()) {
             entry.getValue().setAllSignals(signal);
         }
     }
 
-    void setSignal(Route route, Signal signal) {
+    protected void setSignal(Route route, Signal signal) {
         Road road = context.getIntersection().get(route.getOrigin());
         if (road != null)
             road.setSignal(route, signal);
@@ -49,7 +49,7 @@ public class TrafficLightService {
         setSignal(route, Signal.green);
     }
 
-    void grantGreenIfCompatible(Route _route) {
+    protected void grantGreenIfCompatible(Route _route) {
         setSignal(_route, Signal.green);
     }
 

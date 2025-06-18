@@ -20,4 +20,8 @@ public class Vehicle extends AbstractVehicle {
         return timestamp;
     }
 
+    public Route getRoute() {
+        return new Route(origin, destination);
+    }
+
 }
