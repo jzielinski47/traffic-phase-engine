@@ -2,6 +2,7 @@ package com.jzielinski;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jzielinski.controller.FileController;
 import com.jzielinski.core.SimulationEngine;
@@ -33,6 +34,9 @@ public class Main {
 
             fileController.writeOutput(simulationEngine.getResult());
 
+        } catch (JsonMappingException e) {
+            System.err.println("Error reading input.json: " + e.getMessage());
+            System.exit(1);
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println("Error: " + e.getMessage());
