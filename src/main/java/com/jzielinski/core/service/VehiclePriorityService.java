@@ -34,4 +34,5 @@ public class VehiclePriorityService {
         }
         return selectedVehicle;
     }
+
 }

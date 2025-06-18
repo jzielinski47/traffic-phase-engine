@@ -9,10 +9,6 @@ public class SimulationResult {
         this.stepStatuses = new ArrayList<>();
     }
 
-    public ArrayList<StepStatus> getStepStatuses() {
-        return stepStatuses;
-    }
-
     public void setStepStatuses(ArrayList<StepStatus> stepStatuses) {
         this.stepStatuses = stepStatuses;
     }

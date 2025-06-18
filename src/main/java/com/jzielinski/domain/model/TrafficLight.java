@@ -16,10 +16,6 @@ public class TrafficLight {
         this.route = route;
     }
 
-    public Route getRoute() {
-        return route;
-    }
-
     public Signal getSignal() {
         return signal;
     }
