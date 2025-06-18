@@ -13,18 +13,16 @@ import java.util.Set;
 public class TrafficService {
 
     private final SimulationContext context;
-    private final RouteConflictMap routeConflictMap;
-    private final TrafficLightService trafficLightService;
+    private final RouteService routeService;
     private final VehiclePriorityService vehiclePriorityService;
     private final VehicleMovementService vehicleMovementService;
 
     public TrafficService(SimulationContext context) {
         this.context = context;
-        routeConflictMap = new RouteConflictMap();
-        trafficLightService = new TrafficLightService(context, routeConflictMap);
-        trafficLightService.setAllSignals(Signal.red);
-        vehiclePriorityService = new VehiclePriorityService(context);
-        vehicleMovementService = new VehicleMovementService(context);
+        this.routeService = new RouteService(context);
+        this.vehiclePriorityService = new VehiclePriorityService(context);
+        this.vehicleMovementService = new VehicleMovementService(context);
+        this.routeService.resetRoutes();
     }
 
     public void runStep() {
@@ -36,22 +34,12 @@ public class TrafficService {
             return;
         }
 
-        Set<Route> compatibleRoutes = routeConflictMap
-                .getCompatibleRoutesMap()
-                .getOrDefault(priorityVehicle.getRoute(), Set.of());
-
-        Set<Route> activeGreenRoutes = new HashSet<>(); // a temporary set to store all routes with active green lights
-        trafficLightService.grantGreenIfCompatible(priorityVehicle.getRoute());
-        if (!compatibleRoutes.isEmpty()) {
-            for(Route route : compatibleRoutes) {
-                trafficLightService.grantGreenIfCompatible(route, activeGreenRoutes);
-            }
-        }
+        routeService.configureRoutes(priorityVehicle.getRoute());
 
         StepStatus stepStatus = new StepStatus(vehicleMovementService.moveEligibleVehiclesAndReturnIds());
         context.addStepStatus(stepStatus);
 
-        trafficLightService.setAllSignals(Signal.red);
+        routeService.resetRoutes();
 
     }
 

@@ -1,6 +1,7 @@
 package com.jzielinski.core.service;
 
 import com.jzielinski.domain.model.Road;
+import com.jzielinski.domain.model.RouteConflictMap;
 import com.jzielinski.domain.model.SimulationContext;
 import com.jzielinski.domain.model.Vehicle;
 import com.jzielinski.enums.Direction;
