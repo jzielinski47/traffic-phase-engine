@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public class Main {
 
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+    public static final ObjectMapper objectMapper = new ObjectMapper();
 
     public static void main(String[] args) {
 
