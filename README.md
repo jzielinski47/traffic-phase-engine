@@ -13,11 +13,34 @@ The original project with frontend, REST API, and emergency vehicle handling is 
 - Gradle using Kotlin DSL
 
 #### Algorithm
-Unlike in the TypeScript version I created before, this time I developed a complete algorithm that dynamically assigns priority to vehicles using a service that resolves conflicting and nonconflicting routes. Priority at the intersection is based on the timestamp, meaning the longest waiting vehicle goes first. Once the algorithm selects a vehicle, it gives it a green light and opens all nonconflicting routes related to it. At every step, it makes sure that any newly opened route does not collide with the ones that were already opened.
+Unlike in the TypeScript version I created before, this time I developed a complete algorithm that dynamically assigns priority to vehicles using a service that resolves conflicting and non-conflicting routes. Priority at the intersection is based on the timestamp, meaning the vehicle with the longest wait time goes first. Once selected, the vehicle is granted a green light, and all non-conflicting routes associated with it are opened. At each decision point, the system ensures that no new route conflicts with those already opened.
+There is no predefined list of route groups as it was previously resolved. All potential conflicts are checked dynamically. The algorithm was carefully designed before implementation.
 
-There is no predefined list of route groups. All conflicts are checked dynamically.
+**Execution flow**
+1. The application is launched with two arguments: `<input.json>` and `<output.json>`, provided as relative paths.
+2. File operations are handled by the `FileController`, which encapsulates all logic related to reading and writing to files.
+3. The input command list is parsed based on DTOs that define supported `CommandTypes`.
+4. A `SimulationEngine` instance is initialized using the parsed commands.
+5. The simulation is executed by invoking the engine.
 
-#### How it works
+**Under the hood of the Simulation Engine**
+1. The engine iterates through each command in the sequence.
+2. Each command is validated to ensure that all required fields are present and correctly defined.
+3. A centralized `CommandHandler` routes the validated commands to their respective handlers:
+    - AddVehicle Handler registers vehicles within the simulation context by placing them on valid roads.<br />If the vehicle is flagged as an emergency vehicle, the corresponding road is marked for optimized lookup during prioritization.
+    - Step Handler advances the simulation by one phase.<br />
+        1. The priority is being resolved based on the front row's vehicles' timestamps.
+            - If an emergency vehicle is present (identified via a pre-flagged road), it is given top priority.<br />This marks a significant improvement over the previous version, as the algorithm now performs a direct lookup of the flagged road rather than scanning all roads individually.
+            - If not, the vehicle with the earliest timestamp is selected.
+        2. The RouteService evaluates all potential non-conflicting routes based on the selected priority vehicle. It ensures that newly considered routes do not conflict with any already opened.
+        3. Vehicles on routes granted a green light are allowed to exit the intersection.
+        4. All other traffic is halted with a red light, and the simulation enters a waiting state until the next step command is issued.
+4. After the simulation completes, each step recorded in the `SimulationContext` is written to the specified `output.json` file.
+5. The simulation is now complete
+
+By implementing the logic using an object-oriented approach and delegating responsibilities across well-defined, single-responsibility classes, the system becomes significantly more efficient, maintainable, and scalable. It's a major improvement over the previous TypeScript version. Now, having all the logic encapsulated makes it much easier to read, maintain, and browse through. It can be easily deployed later in other forms than CLI. Much safer to do anything here as I don't directly rely on a single object. SimulationContext is a singleton used once and referenced via carefully distributed methods.
+
+#### How to use it
 You provide an `input.json` file with commands such as `addVehicle` and `step`. Each step runs one simulation phase where the system processes all queues and determines which vehicles can safely leave the intersection.
 The result is saved into `output.json` with a list of vehicles that left during each step.
 
